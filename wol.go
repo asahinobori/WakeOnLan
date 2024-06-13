@@ -4,9 +4,12 @@ import (
 	"errors"
 	"flag"
 	"net"
+	"os"
+	"runtime"
 	"strconv"
 	"time"
 
+	"github.com/shiena/ansicolor"
 	"github.com/sirupsen/logrus"
 )
 
@@ -24,9 +27,16 @@ func init() {
 	log = logrus.New()
 	log.SetLevel(logrus.InfoLevel)
 	log.SetFormatter(&logrus.TextFormatter{
+		ForceColors:     true,
 		TimestampFormat: time.DateTime,
 		FullTimestamp:   true,
 	})
+
+	// fix output format for windows os
+	if runtime.GOOS == "windows" {
+		log.SetOutput(ansicolor.NewAnsiColorWriter(os.Stdout))
+	}
+
 	targetHost = "your.domain.org"
 	targetMAC = "AA:BB:CC:DD:EE:FF"
 	targetPort = 9
